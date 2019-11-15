@@ -1,10 +1,12 @@
-package sevices
+package hadoopIO
 
-import java.io.{ ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream }
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
+
 import org.apache.commons.io.IOUtils
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.{ FSDataInputStream, FileSystem, Path }
-import scala.util.{ Failure, Success, Try }
+import org.apache.hadoop.fs.{FSDataInputStream, FileSystem, Path}
+
+import scala.util.{Failure, Success, Try}
 
 case class HDFSHelper[T](uri: String) extends Serializable {
   val conf = new Configuration()

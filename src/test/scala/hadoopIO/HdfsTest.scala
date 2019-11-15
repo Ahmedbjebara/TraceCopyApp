@@ -1,13 +1,11 @@
-package sevices
-
+package hadoopIO
 
 import java.io.File
 
-import org.scalatest.{BeforeAndAfterAll, Suite}
 import org.apache.hadoop.fs.FileSystem
-import org.apache.hadoop.hdfs.HdfsConfiguration
-import org.apache.hadoop.hdfs.MiniDFSCluster
+import org.apache.hadoop.hdfs.{HdfsConfiguration, MiniDFSCluster}
 import org.apache.spark.sql.SparkSession
+import org.scalatest.{BeforeAndAfterAll, Suite}
 
 trait HdfsTest extends BeforeAndAfterAll {
 

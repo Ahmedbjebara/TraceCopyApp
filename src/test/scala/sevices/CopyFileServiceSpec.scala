@@ -2,8 +2,8 @@ package sevices
 
 import org.scalatest.FlatSpec
 
-class CopyFileServiceSpec extends FlatSpec with HDFSCluster {
-  startHDFS
+class CopyFileServiceSpec extends FlatSpec  {
+
 
   behavior of "CopyFileServiceSpec"
 

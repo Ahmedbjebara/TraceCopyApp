@@ -1,13 +1,10 @@
-package sevices
+package hadoopIO
 
 import java.io.File
-import java.util
 
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.LocalFileSystem
-import org.apache.hadoop.hdfs.{DistributedFileSystem, MiniDFSCluster}
+import org.apache.hadoop.hdfs.MiniDFSCluster
 import org.apache.hadoop.test.PathUtils
-
 
 trait HDFSCluster {
   @transient private var hdfsCluster: MiniDFSCluster = _
