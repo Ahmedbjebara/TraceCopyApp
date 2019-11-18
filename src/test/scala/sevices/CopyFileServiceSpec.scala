@@ -1,8 +1,14 @@
 package sevices
 
+import java.io.File
+
+import hadoopIO.{HDFSCluster, HDFSHelper, HDFSTest}
 import org.scalatest.FlatSpec
 
-class CopyFileServiceSpec extends FlatSpec  {
+
+class CopyFileServiceSpec extends FlatSpec with HDFSTest  {
+
+
 
 
   behavior of "CopyFileServiceSpec"
@@ -10,6 +16,5 @@ class CopyFileServiceSpec extends FlatSpec  {
   it should "tracedCopy" in {
 
   }
-//  Thread.sleep(12000)
-//  shutdownHDFS
+
 }

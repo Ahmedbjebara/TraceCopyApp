@@ -1,17 +1,19 @@
 package hadoopIO
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
+import java.net.URI
 
 import org.apache.commons.io.IOUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FSDataInputStream, FileSystem, Path}
 
+import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
 case class HDFSHelper[T](uri: String) extends Serializable {
   val conf = new Configuration()
-  conf.set("fs.defaultFSi","hdfs://127.0.0.1:8020/user/hdfs/folder/file.csv")
-  val hdfs: FileSystem = FileSystem.get(conf)
+  conf.set("fs.defaultFSi", uri)
+  val hdfs: FileSystem = FileSystem.get(new URI(uri), conf)
 
   def write(data: T, filePath: String): Unit = {
     Try {
@@ -65,4 +67,25 @@ case class HDFSHelper[T](uri: String) extends Serializable {
     }
   }
 
+  def getAllFiles(path: String): Seq[String] = {
+    hdfs.open(new Path(path))
+    val files = hdfs.listStatus(new Path(path))
+    files.map(_.getPath().toString)
+  }
+
+  def ls(path: String): List[String] = {
+    val conf = new Configuration()
+    conf.set("fs.defaultFSi", uri)
+    val fs: FileSystem = FileSystem.get(new URI(uri), conf)
+    fs.mkdirs(new Path(uri + "/test/nid"))
+    println("-----------------------" + fs.getWorkingDirectory.toString)
+    val files = fs.listFiles(new Path(uri + "/test/"),false)
+
+    val status = fs.listStatus(new Path(uri + "/test/"))
+    status.foreach(x => println(x.getPath.toString))
+
+    val filenames = ListBuffer[String]()
+    while (files.hasNext) filenames += files.next().getPath().toString()
+    filenames.toList
+  }
 }
