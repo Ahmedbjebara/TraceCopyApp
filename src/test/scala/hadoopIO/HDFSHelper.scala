@@ -113,12 +113,8 @@ case class HDFSHelper[T](uri: String) extends Serializable {
   }
 
   def ls(path: String): List[String] = {
-    val conf = new Configuration()
-    conf.set("fs.defaultFSi", uri)
-    val fs: FileSystem = FileSystem.get(new URI(uri), conf)
-    fs.mkdirs(new Path(uri + "/test/nid"))
-    fs.mkdirs(new Path(uri + "/test/nid2"))
-    val status = fs.listStatus(new Path(path))
+    val status = hdfs.listStatus(new Path(path))
     status.map(x => x.getPath.toString).toList
   }
+
 }
