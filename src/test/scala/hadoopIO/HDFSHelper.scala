@@ -17,7 +17,7 @@ case class HDFSHelper[T](uri: String) extends Serializable {
 
   def write(data: T, filePath: String): Unit = {
     Try {
-      val path = new Path(filePath+"/HDFSTestFile.txt")
+      val path = new Path(filePath)
         hdfs.create(path)
     } match {
       case Success(dataOutputStream) =>
@@ -57,7 +57,7 @@ case class HDFSHelper[T](uri: String) extends Serializable {
       val inputStream: FSDataInputStream = hdfs.open(path)
       val out = deserialize(IOUtils.toByteArray(inputStream))
       inputStream.close()
-      hdfs.close()
+      //hdfs.close()
       out
     } match {
       case Success(value) => value
