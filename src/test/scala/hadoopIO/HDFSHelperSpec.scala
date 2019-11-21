@@ -25,6 +25,9 @@ class HDFSHelperSpec extends WordSpec with HDFSCluster with BeforeAndAfterAll {
 
     val testFile = new File("src/test/resources/HDFSTestFile.txt")
     hdfsHelper.write(testFile, dir + "/source/HDFSTestFile.txt")
+    hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile2.txt"))
+    hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile3.txt"))
+    hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile4.txt"))
 
     hdfsHelper.listFilesFrom(dir + "/source").foreach(x => println("file : " + x.getPath.toString))
   }
@@ -35,32 +38,46 @@ class HDFSHelperSpec extends WordSpec with HDFSCluster with BeforeAndAfterAll {
 
   "miniDFSClusterSpec" should {
     "write and read data from miniDFS cluster" in {
+      val url = getNameNodeURI
+      val dir = getNameNodeURI + "/test"
+      val hdfsHelper = new HDFSHelper[File](url)
+      val os = hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile3.txt"))
+      os.write("This is a test".getBytes)
+      os.close()
 
-//      //hdfsHelper.ls(dir).foreach(x => println(x))
-//      val data = new File("src/test/resources/HDFSTestFile.txt")
+      println(hdfsHelper.isFileEmpty(dir + "/source/HDFSTestFile2.txt"))
+//      def readLines = Stream.cons(stream.readLine, Stream.continually(stream.readLine))
 //
-//      val hdfsHelper2 = new HDFSHelper[String](url)
-//      // hdfsHelper2.write("test tttttttttt",dir+"/HDFSTestFile.txt")
-//      val result = hdfsHelper.read("hdfs://localhost:9000/test/HDFSTestFile.txt")
-//      /////
-//      val fw = new FileWriter(result, true)
-//      try {
-//        fw.write("test tttttttttt")
-//      }
-//      finally fw.close()
-//      hdfsHelper.write(result, dir + "/HDFSTestFile.txt")
-//      val result2 = hdfsHelper.read("hdfs://localhost:9000/test/HDFSTestFile.txt")
-//      val fileContents = Source.fromFile(result2).getLines.mkString
-//      println("file content : \n" + fileContents)
-//      println("----------------------------------")
-//      //      val status = hdfsHelper.hdfs.listStatus(new Path(dir))
-//      //      status.foreach(x => println(x.isDirectory))
-//      hdfsHelper.listFilesFrom(dir).foreach(x => println("file : " + x.getLen))
-//
-//      //////
+//      //This example checks line for null and prints every existing line consequentally
+//      readLines.takeWhile(_ != null).foreach(line => println(line))
+      //      //hdfsHelper.ls(dir).foreach(x => println(x))
+      //      val data = new File("src/test/resources/HDFSTestFile.txt")
+      //
+      //      val hdfsHelper2 = new HDFSHelper[String](url)
+      //      // hdfsHelper2.write("test tttttttttt",dir+"/HDFSTestFile.txt")
+      //      val result = hdfsHelper.read(dir + "/source/HDFSTestFile3.txt")
+      //      /////
+      //      val fw = new FileWriter(result, true)
+      //      try {
+      //        fw.write("test tttttttttt")
+      //      }
+      //      finally fw.close()
+      //      hdfsHelper.write(result, dir + "/source/HDFSTestFile3.txt")
+      //      val result2 = hdfsHelper.read(dir + "/source/HDFSTestFile3.txt")
+      //      val fileContents = Source.fromFile(result2).getLines.mkString
+      //      println("file content : \n" + fileContents)
+      //      println("----------------------------------")
+      //      //      val status = hdfsHelper.hdfs.listStatus(new Path(dir))
+      //      //      status.foreach(x => println(x.isDirectory))
+      //      hdfsHelper.listFilesFrom(dir).foreach(x => println("file : " + x.getLen))
+      //
+      //      //////
 
-
-//      assert(data == result)
+      //      assert(data == result)
+//      val stream = hdfsHelper.hdfs.open(new Path(dir + "/source/HDFSTestFile2.txt"))
+//      val source = Source.fromInputStream(stream)
+//      source.getLines() // Iterator[String]
+//      org.apache.hadoop.io.MD5Hash.digest(stream)
     }
   }
 }
