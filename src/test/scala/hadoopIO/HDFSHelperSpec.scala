@@ -22,12 +22,12 @@ class HDFSHelperSpec extends WordSpec with HDFSCluster with BeforeAndAfterAll {
 
     hdfsHelper.hdfs.mkdirs(new Path(url + "/test/source"))
     hdfsHelper.hdfs.mkdirs(new Path(url + "/test/destination"))
+    hdfsHelper.hdfs.mkdirs(new Path(url + "/test/trace"))
 
-    val testFile = new File("src/test/resources/HDFSTestFile.txt")
-    hdfsHelper.write(testFile, dir + "/source/HDFSTestFile.txt")
     hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile2.txt"))
     hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile3.txt"))
     hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile4.txt"))
+    hdfsHelper.hdfs.create(new Path(dir + "/trace/trace.txt"))
 
     hdfsHelper.listFilesFrom(dir + "/source").foreach(x => println("file : " + x.getPath.toString))
   }

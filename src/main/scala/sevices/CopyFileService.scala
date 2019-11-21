@@ -11,9 +11,9 @@ import org.apache.spark.sql.SparkSession
 import scala.io.Source
 
 
-object CopyFileService {
+case class CopyFileService (uri : String) extends Serializable {
 
-  val hdfsHelper = new HDFSHelper[File]("")
+  val hdfsHelper = new HDFSHelper[File](uri)
 
   def tracedCopy(sourceDirectory: String, destinationDirectory: String, tracePath: String, traceFileName: String)(implicit spark: SparkSession): Unit = {
     val traceFilePath = tracePath + traceFileName
@@ -22,8 +22,8 @@ object CopyFileService {
     // TODO: useless rdd
     val tracedFilesChecksum = getTracedFilesChecksum(traceFilePath) // 3 APPEL //OK
     val fileRdd = spark.sparkContext.parallelize(fileList)
-    fileRdd.foreach(file =>
-      tracedMove(file, sourceDirectory, destinationDirectory, traceFilePath, tracedFilesChecksum) // 4 APPEL
+    fileRdd.foreach(file =>println(file.getPath.toString)
+      //tracedMove(file, sourceDirectory, destinationDirectory, traceFilePath, tracedFilesChecksum) // 4 APPEL
     )
   }
 

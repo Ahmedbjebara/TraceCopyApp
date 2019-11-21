@@ -1,15 +1,17 @@
 package configuration
 
+import java.io.InputStream
+
+import org.apache.hadoop.fs.FSDataInputStream
+
 import scala.xml.XML
 
 object ArgFileConf {
 
 
-  def loadConfig(configPath: String): Config = {
+  def loadConfig(configPath: String ): Config = {
 
-    val argFile = XML.load(configPath)
-   // val argumentFile = Source.fromFile(configPath)
-   // val argLines = argumentFile.mkString.split("\n")
+    val argFile = XML.loadString(configPath)
 
     val sourceDirectory=  (argFile \ "sourceDirectory").text
     val destinationDirectory = (argFile \ "destinationDirectory").text
