@@ -13,10 +13,10 @@ import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 
 case class HDFSHelper[T](uri: String) extends Serializable {
-  val conf = new Configuration()
+  @transient val conf = new Configuration()
   conf.set("fs.defaultFSi", uri)
 
-  val hdfs: FileSystem = FileSystem.get(new URI(uri), conf)
+  @transient val hdfs: FileSystem = FileSystem.get(new URI(uri), conf)
 
   def write(data: T, filePath: String): Unit = {
     Try {
@@ -30,8 +30,8 @@ case class HDFSHelper[T](uri: String) extends Serializable {
     }
   }
 
-  def writeInto(data: String, filePath: String): Unit = {
-    val os = hdfs.create(new Path(filePath))
+  def writeInto(data: String, filePath: String, fs : FileSystem): Unit = {
+    val os = fs.create(new Path(filePath))
     os.write(data.getBytes)
     os.close()
   }
@@ -89,12 +89,12 @@ case class HDFSHelper[T](uri: String) extends Serializable {
     }
   }
 
-  def listFilesFrom(path: String): Seq[FileStatus] = {
+  def listFilesFrom(path: String): Array[(String,String)] = {
     val conf = new Configuration()
     conf.set("fs.defaultFSi", uri)
     val fs: FileSystem = FileSystem.get(new URI(uri), conf)
     val files = fs.listStatus(new Path(path))
-    files.filterNot(x => x.isDirectory)
+    files.filterNot(x => x.isDirectory).map(x=>(x.getPath.toString,x.getPath.getName))
   }
 
   def ls(path: String): List[String] = {

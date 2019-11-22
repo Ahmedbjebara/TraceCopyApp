@@ -21,12 +21,12 @@ class TracedCopySuite extends FunSuite with BeforeAndAfterAll with Matchers with
   hdfsHelper.hdfs.mkdirs(new Path(url + "/test/trace"))
 
   hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile2.txt"))
-  hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile3.txt"))
-  hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile4.txt"))
+//  hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile3.txt"))
+//  hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile4.txt"))
   hdfsHelper.hdfs.create(new Path(dir + "/trace/trace.csv"))
   hdfsHelper.hdfs.create(new Path(dir + "/config.xml"))
 
-  hdfsHelper.listFilesFrom(dir + "/source").foreach(x => println("file : " + x.getPath.toString))
+  hdfsHelper.listFilesFrom(dir + "/source").foreach(x => println("file : " + x._1))
 
   implicit val spark: SparkSession = SparkSession
     .builder()
@@ -39,7 +39,9 @@ class TracedCopySuite extends FunSuite with BeforeAndAfterAll with Matchers with
 
   val lines = scala.io.Source.fromFile("src/test/resources/fichierArguments.xml").mkString
 
-  hdfsHelper.writeInto(lines, configPath)
+  hdfsHelper.writeInto(lines, configPath,hdfsHelper.hdfs)
+  hdfsHelper.writeInto(lines, dir + "/source/HDFSTestFile2.txt",hdfsHelper.hdfs)
+
 
 
   val stream = hdfsHelper.hdfs.open(new Path(configPath))
@@ -64,7 +66,15 @@ class TracedCopySuite extends FunSuite with BeforeAndAfterAll with Matchers with
     }
 
 
+
+
   }
+
+  val stream3 = hdfsHelper.hdfs.open(new Path(dir + "/trace/trace.csv"))
+
+  def readLines3 = scala.io.Source.fromInputStream(stream3)
+  val snapshot_id3: String = readLines3.takeWhile(_ != null).mkString
+  println("----------"+snapshot_id3+"--------------------")
 
   shutdownHDFS
 
