@@ -18,7 +18,7 @@ class HDFSHelperSpec extends WordSpec with HDFSCluster with BeforeAndAfterAll {
 
     val url = getNameNodeURI
     val dir = getNameNodeURI + "/test"
-    val hdfsHelper = new HDFSHelper[File](url)
+    val hdfsHelper = new HDFSHelper(url)
 
     hdfsHelper.hdfs.mkdirs(new Path(url + "/test/source"))
     hdfsHelper.hdfs.mkdirs(new Path(url + "/test/destination"))
@@ -29,7 +29,7 @@ class HDFSHelperSpec extends WordSpec with HDFSCluster with BeforeAndAfterAll {
     hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile4.txt"))
     hdfsHelper.hdfs.create(new Path(dir + "/trace/trace.txt"))
 
-    hdfsHelper.listFilesFrom(dir + "/source").foreach(x => println("file : " + x.getPath.toString))
+    hdfsHelper.listFilesFrom(dir + "/source").foreach(x => println("file : " + x._1))
   }
 
   override protected def afterAll(): Unit = {
@@ -40,7 +40,7 @@ class HDFSHelperSpec extends WordSpec with HDFSCluster with BeforeAndAfterAll {
     "write and read data from miniDFS cluster" in {
       val url = getNameNodeURI
       val dir = getNameNodeURI + "/test"
-      val hdfsHelper = new HDFSHelper[File](url)
+      val hdfsHelper = new HDFSHelper(url)
       val os = hdfsHelper.hdfs.create(new Path(dir + "/source/HDFSTestFile3.txt"))
       os.write("This is a test".getBytes)
       os.close()

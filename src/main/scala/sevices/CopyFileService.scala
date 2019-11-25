@@ -1,19 +1,12 @@
 package sevices
 
-import java.io.{File, FileInputStream, FileWriter}
-import java.nio.file.{Files, Paths}
-import java.security.{DigestInputStream, MessageDigest}
-
 import hadoopIO.HDFSHelper
-import org.apache.hadoop.fs.{FileStatus, FileSystem, Path}
+import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.spark.sql.SparkSession
 
-import scala.io.Source
+case class CopyFileService(uri: String) extends Serializable {
 
-
-case class CopyFileService (uri : String) extends Serializable {
-
-  val hdfsHelper = new HDFSHelper[File](uri)
+  val hdfsHelper = new HDFSHelper(uri)
 
   def tracedCopy(sourceDirectory: String, destinationDirectory: String, tracePath: String, traceFileName: String)(implicit spark: SparkSession): Unit = {
     val traceFilePath = tracePath + traceFileName
@@ -27,30 +20,18 @@ case class CopyFileService (uri : String) extends Serializable {
     )
   }
 
-  //  private def listFilesFrom(directory: String): List[File] = {
-  //    val directoryFile: File = new File(directory)
-  //    if (directoryFile.exists && directoryFile.isDirectory) {
-  //      directoryFile.listFiles.filter(_.isFile).toList
-  //    } else {
-  //      List[File]()
-  //    }
-  //  }
-
-  //private def isFileEmpty(file: String) = Source.fromFile(file).isEmpty
-
-
   private def initTraceFile(traceFilePath: String): Unit = {
-    val hdfsHelper = new HDFSHelper[File](uri)
-    val header: String = "File;Source;Destination;State;Cheksum;Message;Size;LastModifiedDate"
+    val hdfsHelper = new HDFSHelper(uri)
+    val header: String = "File;Source;Destination;State;Cheksum;Message;Size;LastModifiedDate\n"
     if (hdfsHelper.isFileEmpty(traceFilePath)) {
-      hdfsHelper.writeInto(header, traceFilePath,hdfsHelper.hdfs)
+      hdfsHelper.writeInto(header, traceFilePath, hdfsHelper.hdfs)
     }
   }
 
 
   private def computeHash(path: String): String = {
-    val hdfsHelper = new HDFSHelper[File](uri)
-    println("hash "+path+" hdfs "+hdfsHelper)
+    val hdfsHelper = new HDFSHelper(uri)
+    println("hash " + path + " hdfs " + hdfsHelper)
     val stream = hdfsHelper.hdfs.open(new Path(path))
     org.apache.hadoop.io.MD5Hash.digest(stream).toString
   }
@@ -65,23 +46,16 @@ case class CopyFileService (uri : String) extends Serializable {
 
   }
 
-  private def traceWriter(traceFilePath: String, message: String, fs : FileSystem) = {
-    //traceFileWriter.write(message)
-    hdfsHelper.writeInto(message,traceFilePath,fs)
+  private def traceWriter(traceFilePath: String, message: String, fs: FileSystem) = {
+    hdfsHelper.writeInto(message, traceFilePath, fs)
   }
 
-  // case class TracedMoveAction(file: File, sourceDirectory: String, destinationDirectory: String,traceFilePath: String,
-  //   tracedFilesChecksum : Array[String])
-  //  {
-  private def tracedMove(file: (String,String), sourceDirectory: String, destinationDirectory: String, traceFilePath: String,
+  private def tracedMove(file: (String, String, Long, Long), sourceDirectory: String, destinationDirectory: String, traceFilePath: String,
                          tracedFilesChecksum: Array[String]) = {
 
-    val hdfsHelper = new HDFSHelper[File](uri)
+    val hdfsHelper = new HDFSHelper(uri)
     val hash = computeHash(sourceDirectory + file._2) //check du nveau fichier  // APPEL //ok
     val exists = hdfsHelper.hdfs.exists(new Path(destinationDirectory + file._2)) // true ou false existe dans le rep destination
-
-
-    // complexity is proportional to tracedFilesChecksum s length
 
     (exists, tracedFilesChecksum.contains(hash)) match {
       case (false, false) => {
@@ -91,25 +65,25 @@ case class CopyFileService (uri : String) extends Serializable {
           destinationDirectory + file._2
         )
         val messageSuccess: String = file._2 + ";" + file._1 + ";" + destinationDirectory + file._2 + ";MOVE SUCCESS: File's Name  dosen't exist yet !" + ";" + hash + ";Cheksum dosen't exist yet !" + String.format("%n")
-        traceWriter(traceFilePath, messageSuccess,hdfsHelper.hdfs)
+        traceWriter(traceFilePath, messageSuccess, hdfsHelper.hdfs)
       }
 
       case (true, false) => {
 
         val messageFileNameExists = file._2 + ";" + file._1 + ";" + destinationDirectory + file._2 + ";MOVE FAILED: File's Name Already Exists" + ";" + hash + "; " + String.format("%n")
-        traceWriter( traceFilePath, messageFileNameExists,hdfsHelper.hdfs)
+        traceWriter(traceFilePath, messageFileNameExists, hdfsHelper.hdfs)
       }
 
       case (false, true) => {
 
         val messageChecksumExists = file._2 + ";" + file._1 + ";" + destinationDirectory + file._2 + ";MOVE FAILED" + ";" + hash + ";Cheksum Exists Already !" + String.format("%n")
-        traceWriter( traceFilePath, messageChecksumExists,hdfsHelper.hdfs)
+        traceWriter(traceFilePath, messageChecksumExists, hdfsHelper.hdfs)
       }
 
       case (true, true) => {
 
         val messageChecksum_NameExists = file._2 + ";" + file._1 + ";" + destinationDirectory + file._2 + ";MOVE FAILED" + ";" + hash + ";Cheksum AND Name Exists Already !" + String.format("%n")
-        traceWriter( traceFilePath, messageChecksum_NameExists,hdfsHelper.hdfs)
+        traceWriter(traceFilePath, messageChecksum_NameExists, hdfsHelper.hdfs)
       }
     }
 

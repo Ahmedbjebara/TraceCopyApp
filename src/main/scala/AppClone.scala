@@ -24,7 +24,7 @@ object AppClone {
       System.exit(1)
     }
 
-    val hdfsHelper = new HDFSHelper[File]("url")
+    val hdfsHelper = new HDFSHelper("url")
     val stream = hdfsHelper.hdfs.open(new Path(args(0)))
     val config: Config = ArgFileConf.loadConfig("stream")
 
@@ -32,7 +32,7 @@ object AppClone {
     config.tracemethod match {
       case "file" => CopyFileService("").tracedCopy(config.sourceDirectory, config.destinationDirectory, config.tracePath, config.traceFileName)
       case "hivetable" => {
-        CopyHiveTableService.tabletracedCopy(config.sourceDirectory, config.destinationDirectory)
+        CopyHiveTableService("").tabletracedCopy(config.sourceDirectory, config.destinationDirectory)
         spark.sql("SELECT * FROM TRACETABLE").show()
       }
 

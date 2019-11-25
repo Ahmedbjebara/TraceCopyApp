@@ -1,5 +1,5 @@
 <arguments>
-<tracemethod>file</tracemethod>
+<tracemethod>hivetable</tracemethod>
 <destinationDirectory>hdfs://localhost:9000/test/destination/</destinationDirectory>
 <tracePath>hdfs://localhost:9000/test/trace/</tracePath>
 <traceFileName>trace.csv</traceFileName>
