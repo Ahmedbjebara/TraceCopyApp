@@ -16,6 +16,7 @@ case class HDFSHelper(uri: String) extends Serializable {
     def readLines = scala.io.Source.fromInputStream(stream)
 
     val content: String = readLines.takeWhile(_ != null).mkString
+    readLines.close()
     val os = fs.create(new Path(filePath))
     os.write(content.getBytes)
     os.write(data.getBytes)

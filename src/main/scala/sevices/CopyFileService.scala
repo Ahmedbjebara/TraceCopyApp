@@ -21,7 +21,8 @@ case class CopyFileService(uri: String) extends Serializable {
   }
 
   private def initTraceFile(traceFilePath: String): Unit = {
-    val hdfsHelper = new HDFSHelper(uri)
+
+    val hdfsHelper = HDFSHelper(uri)
     val header: String = "File;Source;Destination;State;Cheksum;Message;Size;LastModifiedDate\n"
     if (hdfsHelper.isFileEmpty(traceFilePath)) {
       hdfsHelper.writeInto(header, traceFilePath, hdfsHelper.hdfs)
@@ -47,6 +48,7 @@ case class CopyFileService(uri: String) extends Serializable {
   }
 
   private def traceWriter(traceFilePath: String, message: String, fs: FileSystem) = {
+    val hdfsHelper = new HDFSHelper(uri)
     hdfsHelper.writeInto(message, traceFilePath, fs)
   }
 

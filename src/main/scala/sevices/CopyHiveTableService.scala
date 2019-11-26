@@ -42,8 +42,8 @@ case class CopyHiveTableService(uri: String) {
 
 
   def initHiveTable()(implicit spark: SparkSession) = {
-    //spark.sql("DROP TABLE TRACETABLE")
-    //spark.sql("CREATE TABLE IF NOT EXISTS TRACETABLE(File  STRING, Source STRING , Destination STRING , State STRING , Cheksum STRING , Message STRING , Size STRING ,LastModifiedDate STRING)")
+   // spark.sql("DROP TABLE TRACETABLE")
+    spark.sql("CREATE TABLE IF NOT EXISTS TRACETABLE(File  STRING, Source STRING , Destination STRING , State STRING , Cheksum STRING , Message STRING , Size STRING ,LastModifiedDate STRING)")
   }
 
 
