@@ -64,7 +64,7 @@ class ProcessDataSpec extends FlatSpec with Suite with HDFSCluster with BeforeAn
     super.beforeEach()
   }
 
-  it should "make traced copy with  an empty destination and trace " in {
+  it should "process the data of all files in destination" in {
 
     val schema = ProcessDataFiles(clusterURI).parseSchema(config.schemaFile)
     val loadedData: DataFrame = ProcessDataFiles(clusterURI).load(config.destinationDirectory, schema, config.readMode, config.sourceFileFormat)
