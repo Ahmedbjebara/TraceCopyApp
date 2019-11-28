@@ -4,7 +4,7 @@
 <tracePath>hdfs://localhost:9000/test/trace/</tracePath>
 <traceFileName>trace.csv</traceFileName>
 <schemaFile>hdfs://localhost:9000/test/schema/schemaout.csv</schemaFile>
-<resultFile>C:/Users/dell/IdeaProjects/Realtimecheksum/projet/resultat</resultFile>
+<resultFile>hdfs://localhost:9000/test/result/</resultFile>
 <readMode>PERMISSIVE</readMode>
 <partitionColumn>filename</partitionColumn>
 <sourceDirectory>hdfs://localhost:9000/test/source/</sourceDirectory>
